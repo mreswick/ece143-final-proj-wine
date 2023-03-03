@@ -1,6 +1,6 @@
 import pandas as pd
 
-"""Get statistics about columns.
+"""Get statistics about frequencies in columns.
 """
 
 #constants
