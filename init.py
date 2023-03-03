@@ -1,5 +1,6 @@
 import sqlite3 as sl
 import pandas as pd
+from wine_stat import freq # named it wine_stat so that it doesn't override python's stat package
 
 #constants
 WINE_INIT_DB_NAME = 'wine_init.db' # needs to end in .db
@@ -7,6 +8,13 @@ WINE_INIT_PATH_TO_DB = 'database/' + WINE_INIT_DB_NAME
 WINE_INIT_TABLE_NAME = 'wine_init'
 WINE_DATA_FILE = 'winemag-data-130k-v2.csv'
 WINE_DATA_PATH = 'data/' + WINE_DATA_FILE
+
+#helpers
+def get_db(cur=None, con=None):
+  #database vars
+  con = con if con else sl.connect(WINE_INIT_PATH_TO_DB)
+  cur = cur if cur else con.cursor()
+  return (con, cur)
 
 #testing:
 def test_num_rows(cur):
@@ -26,15 +34,23 @@ def init_wine_db(cur=None, con=None, testing=True):
   """Read csv file into database table.
   """ 
   #database vars
-  con = con if con else sl.connect(WINE_INIT_PATH_TO_DB)
-  cur = cur if cur else con.cursor()
+  con, cur = get_db(cur, con)
   #data
   wine_data = pd.read_csv(WINE_DATA_PATH)
   wine_data.to_sql(WINE_INIT_TABLE_NAME, con, if_exists='replace')
   #if testing, run some tests to ensure db is loaded correctly
   if(testing):
     test_num_rows(cur)
-  
-  
+
+def set_freq_tables(cur=None, con=None, testing=True):
+  """Create frequency tables for counts in various
+  columns.
+  """
+  #database vars
+  con, cur = get_db(cur, con)
+  #set frequency of countries
+  freq.set_db_freq_country(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+
 if __name__ == "__main__":
   init_wine_db()
+  set_freq_tables()
