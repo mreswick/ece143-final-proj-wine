@@ -70,23 +70,39 @@ def set_freq_tables(cur=None, con=None, testing=True):
   #set frequency of wine 'winery'
   freq.set_db_freq_winery(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
 
-def get_top_ns_tables(cur=None, con=None, n=5):
+def get_top_ns_tables_for_n(cur=None, con=None, n=5):
   """Create top n tables from frequencies for
   various columns.
+  Currently uses global dictionary of frequency table names and their schemas
+  from wine_stat/freq.py, so this function needs to be called
+  after that dictionary is created (currently after set_freq_tables
+  of this file is called).
   """
   #database vars
   con, cur = get_db(cur, con)
-  #get top 5 countries
-  freq.get_top_n_rows(cur, con, 'country', 'freq_country', 'freq_country', n)
+  freq.get_top_n_rows_of_each_freq_table(cur, con, n)
 
-def plot_pie_charts(cur=None, con=None):
-  #database vars
-  con, cur = get_db(cur, con)
-  #plot pie chart for top 5 countries (and 'Other')
-  vis.plot_pie_chart(cur, con, 'freq_country_top_5', 'country', 'freq_country')
+def get_top_ns_tables(cur=None, con=None, n_list=[5]):
+  """Takes a list of n's (n_i's), n_list, and creates a top_n table for each
+  frequency table for each of those n_i. This function should thus be called
+  after the frequency tables are created (currently after set_freq_tables
+  of this file is called).
+  """
+  assert isinstance(n_list, list) or isinstance(n_list, int)
+  #make as list if just a single entry passed
+  n_list = [n_list] if isinstance(n_list, int) else n_list
+  for n_i in n_list:
+    get_top_ns_tables_for_n(cur, con, n_i)
+
 
 if __name__ == "__main__":
-  init_wine_db()
-  set_freq_tables()
-  get_top_ns_tables()
-  plot_pie_charts()
+  con, cur = get_db(cur=None, con=None) #don't yet have connection to database
+  init_wine_db(cur, con)
+  set_freq_tables(cur, con)
+  # get top n_i tables for n_i = 5, 10, 20
+  get_top_ns_tables(cur=cur, con=con, n_list=[5, 10, 20])
+  # plot pie charts:
+  # - NOTE TO FIX OR BE AWARE OF: this just-below function call may use up too much memory 
+  #   if len(n_list) for n_list to get_top_ns_tables just above is too long (as will open 
+  #   up a pie chart for each top n table)
+  vis.plot_pie_charts_all_top_n_freq_tables(cur, con, freq.glbl_top_n_freq_schemas)

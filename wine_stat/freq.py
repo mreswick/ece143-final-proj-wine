@@ -4,7 +4,7 @@ import pandas as pd
 """
 
 #constants
-# column names:
+# column names and table name for each frequency table:
 # - country:
 COUNTRY_COL = "country"
 FREQ_COUNTRY_COUNT_RES_COL = "freq_country"
@@ -49,11 +49,62 @@ FREQ_VARIETY_TABLE = FREQ_VARIETY_COUNT_RES_COL
 WINERY_COL = 'winery'
 FREQ_WINERY_COUNT_RES_COL = 'freq_winery'
 FREQ_WINERY_TABLE = FREQ_WINERY_COUNT_RES_COL
+"""
+Dictionary of table schemas of frequency tables; is added to when a frequency table is created.
+Each entry should be a list of column names in the order they are in the db.
+Ex: if two tables freq_country (with cols country, freq_country) and 
+ freq_variety (with cols variety, freq_variety), then this dictionary should
+ end up being after adding those tables to the database:
+  dict_freq_schemas = {
+    freq_country: [country, freq_country],
+    freq_variety: [variety, freq_variety]
+  }
+""" 
+glbl_dict_freq_schemas = {}
+"""
+Dictionary of table schemas of top_n frequency tables; is same as above, except also has
+keys for the number of top_n rows, ie for n. A new entry is added
+whenever get_top_n_rows(...) is called. Stores the table schema for each top_n_rows
+table, keyed by table name.
+Ex: if two tables freq_country_top_5 (with cols country, freq_country) and 
+ freq_variety_top_20 (with cols variety, freq_variety), then this dictionary should
+ end up being after adding those tables to the database:
+  dict_freq_schemas = {
+    5: {
+      freq_country_top_5: [country, freq_country],
+    }
+    20: {
+      freq_variety_top_20: [variety, freq_variety]
+    }
+  }
+""" 
+glbl_top_n_freq_schemas = {}
 
 
 #for testing if imported correctly
 def test_import():
   print("Imported!")
+
+#gets top n rows of each frequency table; should only be called
+#after the frequency tables are created (ie after dict_freq_schemas
+#is populated with frequency tables to get the top n rows of))
+def get_top_n_rows_of_each_freq_table(cur, con, n, dict_freq_schemas=glbl_dict_freq_schemas):
+  """Grabs the top n rows of each frequency table, creating a new table with those top n
+  rows, and a "Other" category with the counts of the rest as an additional row after those
+  top/greatest n. Uses the default result table name and other columsn name ('Other') of
+  get_top_n_rows for each.
+  Param:
+    @cur, con: vars to wine init database
+    @dict_freq_schemas: dictionary with keys as frequency table names and values as lists
+    of their column names. Currently is labels column followed by frequency/count column.
+  """
+  assert isinstance(n, int)
+  assert n > 0
+  assert isinstance(dict_freq_schemas, dict)
+  for (freq_table_name, schema_list) in dict_freq_schemas.items():
+    # get top n rows table of corresponding frequency table
+    col_of_labels_name, col_of_freqs_name = schema_list[0], schema_list[1]
+    get_top_n_rows(cur, con, col_of_labels_name, col_of_freqs_name, freq_table_name, n)
 
 #get top n rows of (frequency) table and store in database as new table
 def get_top_n_rows(
@@ -105,13 +156,11 @@ def get_top_n_rows(
   freq_top_n_counts_with_other = pd.concat([freq_top_n_counts, freq_rest_other_row_as_df])
   #write resulting df to database
   freq_top_n_counts_with_other.to_sql(res_table_name, con, if_exists='replace')
-  #debug
-  # print(freq_top_n_counts_with_other)
-  # print(freq_rest_other_row_as_df)
-  # print("sum of other: ", freq_rest_other_count)
-  # print("sum of counts: ", freq_top_n_counts[col_of_freqs].sum())
-  # print("total of counts: ", freq_counts[col_of_freqs].sum())
-  #print(freq_top_n_counts)
+  #add schema info for this "top n" table to global dictionary of this file for those schemas:
+  global glbl_top_n_freq_schemas
+  # initialize dictionary for that n value to be empty if it doesn't yet exist
+  glbl_top_n_freq_schemas[n] = glbl_top_n_freq_schemas.get(n, {})
+  glbl_top_n_freq_schemas[n][res_table_name] = [col_of_labels, col_of_freqs]
 
 def set_db_freq_table_def(
   cur,
@@ -137,7 +186,9 @@ def set_db_freq_table_def(
     @num_expected_freq_count_rows: used for testing purposes: is the number of 
     rows the resulting two-columned table is expected to have. If specified,
     then this function also performs a test to assert that the resulting table
-    has that same number of rows. 
+    has that same number of rows.
+  This function also adds the table schema as a list of column names of the table created/added
+  to the global dictionary for frequency tables of this file, dict_freq_schemas. 
   """
   assert isinstance(wine_init_table, str)
   assert isinstance(col_to_count, str)
@@ -149,6 +200,9 @@ def set_db_freq_table_def(
   # write to database as new table
   freq_counts = freq_counts.set_index(col_to_count)
   freq_counts.to_sql(freq_count_table, con, if_exists='replace') 
+  # add table to dictionary of schemas (each schema added is its own list, keyed by table name)
+  global glbl_dict_freq_schemas
+  glbl_dict_freq_schemas[freq_count_table] = [col_to_count, freq_count_res_col]
   # if testing, then perform a check to ensure table is created properly
   if(num_expected_freq_count_rows):
     #get number of current rows
