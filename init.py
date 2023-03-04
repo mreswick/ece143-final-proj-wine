@@ -1,6 +1,7 @@
 import sqlite3 as sl
 import pandas as pd
 from wine_stat import freq # named it wine_stat so that it doesn't override python's stat package
+from wine_stat import vis  # named it wine_start so that it doesn't override python's stat package
 
 #constants
 WINE_INIT_DB_NAME = 'wine_init.db' # needs to end in .db
@@ -69,6 +70,23 @@ def set_freq_tables(cur=None, con=None, testing=True):
   #set frequency of wine 'winery'
   freq.set_db_freq_winery(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
 
+def get_top_ns_tables(cur=None, con=None, n=5):
+  """Create top n tables from frequencies for
+  various columns.
+  """
+  #database vars
+  con, cur = get_db(cur, con)
+  #get top 5 countries
+  freq.get_top_n_rows(cur, con, 'country', 'freq_country', 'freq_country', n)
+
+def plot_pie_charts(cur=None, con=None):
+  #database vars
+  con, cur = get_db(cur, con)
+  #plot pie chart for top 5 countries (and 'Other')
+  vis.plot_pie_chart(cur, con, 'freq_country_top_5', 'country', 'freq_country')
+
 if __name__ == "__main__":
   init_wine_db()
   set_freq_tables()
+  get_top_ns_tables()
+  plot_pie_charts()

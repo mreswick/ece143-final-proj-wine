@@ -55,6 +55,64 @@ FREQ_WINERY_TABLE = FREQ_WINERY_COUNT_RES_COL
 def test_import():
   print("Imported!")
 
+#get top n rows of (frequency) table and store in database as new table
+def get_top_n_rows(
+  cur,
+  con,
+  col_of_labels,
+  col_of_freqs,
+  table_name,
+  n,
+  res_table_name=None,
+  other_columns_name="Other"
+):
+  """Grabs the top n rows, and adds a row at the end
+  that is the sum of the remaining rows. It grabs
+  these first n rows from table with name table_name,
+  and outputs them with same column names in table
+  with name res_table_name.
+  Params:
+   @cur, con: database vars
+   @table_name, n res_table_name: name of table to get top n rows from
+   and stored in a new table res_table_name.
+   @col_of_label: column of names/labels
+   @col_of_freqs: column that stores counts of col_of_labels 
+   @other_columns_name: the name to put in the non-frequency column
+  """
+  assert isinstance(col_of_labels, str)
+  assert isinstance(col_of_freqs, str)
+  assert isinstance(table_name, str)
+  assert isinstance(res_table_name, str) or res_table_name == None
+  assert isinstance(other_columns_name, str)
+  assert isinstance(n, int)
+  assert n > 0
+  #by default set resulting table name to same as table name but with top_n appended
+  res_table_name = res_table_name if res_table_name != None else f'{table_name}_top_{n}'
+
+  freq_top_n_query_str = f'SELECT {col_of_labels}, {col_of_freqs} FROM {table_name} ORDER BY {col_of_freqs} DESC'
+  freq_counts = pd.read_sql(freq_top_n_query_str, con)
+  freq_counts = freq_counts.set_index(col_of_labels)
+  freq_top_n_counts = freq_counts.head(n)
+  freq_rest_other = freq_counts.iloc[n:, :]
+  freq_rest_other_count = freq_rest_other[col_of_freqs].sum()
+  #form resulting dataframe with new row "OTHER" with sum of other count (of rows below n)
+  dict_freq_rest_other_row = {}
+  dict_freq_rest_other_row[col_of_labels] = [other_columns_name]
+  dict_freq_rest_other_row[col_of_freqs] = [freq_rest_other_count]
+  freq_rest_other_row_as_df = pd.DataFrame(data=dict_freq_rest_other_row)
+  freq_rest_other_row_as_df = freq_rest_other_row_as_df.set_index(col_of_labels)
+  #append other row to top n dataframe
+  freq_top_n_counts_with_other = pd.concat([freq_top_n_counts, freq_rest_other_row_as_df])
+  #write resulting df to database
+  freq_top_n_counts_with_other.to_sql(res_table_name, con, if_exists='replace')
+  #debug
+  # print(freq_top_n_counts_with_other)
+  # print(freq_rest_other_row_as_df)
+  # print("sum of other: ", freq_rest_other_count)
+  # print("sum of counts: ", freq_top_n_counts[col_of_freqs].sum())
+  # print("total of counts: ", freq_counts[col_of_freqs].sum())
+  #print(freq_top_n_counts)
+
 def set_db_freq_table_def(
   cur,
   con,
@@ -85,10 +143,11 @@ def set_db_freq_table_def(
   assert isinstance(col_to_count, str)
   assert isinstance(freq_count_res_col, str)
   assert isinstance(freq_count_table, str)
-  freq_count_query_str = f'SELECT {col_to_count}, COUNT({col_to_count}) AS {freq_count_res_col} FROM {wine_init_table} GROUP BY {col_to_count}'
+  freq_count_query_str = f'SELECT {col_to_count}, COUNT({col_to_count}) AS {freq_count_res_col} FROM {wine_init_table} GROUP BY {col_to_count} ORDER BY {freq_count_res_col} DESC'
   # two-column table of country names and their counts/frequencies
   freq_counts = pd.read_sql(freq_count_query_str, con)
   # write to database as new table
+  freq_counts = freq_counts.set_index(col_to_count)
   freq_counts.to_sql(freq_count_table, con, if_exists='replace') 
   # if testing, then perform a check to ensure table is created properly
   if(num_expected_freq_count_rows):
