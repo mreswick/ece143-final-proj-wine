@@ -50,6 +50,11 @@ def set_freq_tables(cur=None, con=None, testing=True):
   con, cur = get_db(cur, con)
   #set frequency of countries
   freq.set_db_freq_country(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of desginations
+  freq.set_db_freq_desig(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of points
+  freq.set_db_freq_points(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+
 
 if __name__ == "__main__":
   init_wine_db()
