@@ -17,6 +17,39 @@ FREQ_DESIG_TABLE = FREQ_DESIG_COUNT_RES_COL
 POINTS_COL = 'points'
 FREQ_POINTS_COUNT_RES_COL = 'freq_points'
 FREQ_POINTS_TABLE = FREQ_POINTS_COUNT_RES_COL
+# - price
+PRICE_COL = 'price'
+FREQ_PRICE_COUNT_RES_COL = 'freq_price'
+FREQ_PRICE_TABLE = FREQ_PRICE_COUNT_RES_COL
+# - province
+PROVINCE_COL = 'province'
+FREQ_PROVINCE_COUNT_RES_COL = 'freq_province'
+FREQ_PROVINCE_TABLE = FREQ_PROVINCE_COUNT_RES_COL
+# - region1
+REGION1_COL = 'region_1'
+FREQ_REGION1_COUNT_RES_COL = 'freq_region1'
+FREQ_REGION1_TABLE = FREQ_REGION1_COUNT_RES_COL
+# - region2
+REGION2_COL = 'region_2'
+FREQ_REGION2_COUNT_RES_COL = 'freq_region2'
+FREQ_REGION2_TABLE = FREQ_REGION2_COUNT_RES_COL
+# - taster_name
+TASTER_COL = 'taster_name'
+FREQ_TASTER_COUNT_RES_COL = 'freq_taster_name'
+FREQ_TASTER_TABLE = FREQ_TASTER_COUNT_RES_COL
+# - taster twitter handle
+TASTER_TWTR_COL = 'taster_twitter_handle'
+FREQ_TASTER_TWTR_COUNT_RES_COL = 'freq_taster_twitter_handle'
+FREQ_TASTER_TWTR_TABLE = FREQ_TASTER_TWTR_COUNT_RES_COL
+# - variety
+VARIETY_COL = 'variety'
+FREQ_VARIETY_COUNT_RES_COL = 'freq_variety'
+FREQ_VARIETY_TABLE = FREQ_VARIETY_COUNT_RES_COL
+# - winery
+WINERY_COL = 'winery'
+FREQ_WINERY_COUNT_RES_COL = 'freq_winery'
+FREQ_WINERY_TABLE = FREQ_WINERY_COUNT_RES_COL
+
 
 #for testing if imported correctly
 def test_import():
@@ -46,7 +79,7 @@ def set_db_freq_table_def(
     @num_expected_freq_count_rows: used for testing purposes: is the number of 
     rows the resulting two-columned table is expected to have. If specified,
     then this function also performs a test to assert that the resulting table
-    has that same name of rows. 
+    has that same number of rows. 
   """
   assert isinstance(wine_init_table, str)
   assert isinstance(col_to_count, str)
@@ -149,3 +182,164 @@ def set_db_freq_points(
   num_expected_freq_count_rows = 21 if testing else None  
   set_db_freq_table_def(cur, con, wine_init_table, points_col, 
     freq_points_count_res_col, freq_points_table, num_expected_freq_count_rows)
+
+def set_db_freq_province(
+  cur,
+  con, 
+  wine_init_table,
+  province_col=PROVINCE_COL, 
+  freq_province_count_res_col= FREQ_PROVINCE_COUNT_RES_COL,
+  freq_province_table=FREQ_PROVINCE_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'points' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(province_col, str)
+  assert isinstance(freq_province_count_res_col, str)
+  assert isinstance(freq_province_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None
+  set_db_freq_table_def(cur, con, wine_init_table, province_col, 
+    freq_province_count_res_col, freq_province_table, num_expected_freq_count_rows)
+
+def set_db_freq_region1(
+  cur,
+  con, 
+  wine_init_table,
+  region1_col=REGION1_COL, 
+  freq_region1_count_res_col= FREQ_REGION1_COUNT_RES_COL,
+  freq_region1_table=FREQ_REGION1_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'region1' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(region1_col, str)
+  assert isinstance(freq_region1_count_res_col, str)
+  assert isinstance(freq_region1_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, region1_col, 
+    freq_region1_count_res_col, freq_region1_table, num_expected_freq_count_rows)
+
+def set_db_freq_region2(
+  cur,
+  con, 
+  wine_init_table,
+  region2_col=REGION2_COL, 
+  freq_region2_count_res_col= FREQ_REGION2_COUNT_RES_COL,
+  freq_region2_table=FREQ_REGION2_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'region2' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(region2_col, str)
+  assert isinstance(freq_region2_count_res_col, str)
+  assert isinstance(freq_region2_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, region2_col, 
+    freq_region2_count_res_col, freq_region2_table, num_expected_freq_count_rows)
+
+def set_db_freq_taster(
+  cur,
+  con, 
+  wine_init_table,
+  taster_col=TASTER_COL, 
+  freq_taster_count_res_col= FREQ_TASTER_COUNT_RES_COL,
+  freq_taster_table=FREQ_TASTER_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'taster_name' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(taster_col, str)
+  assert isinstance(freq_taster_count_res_col, str)
+  assert isinstance(freq_taster_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, taster_col, 
+    freq_taster_count_res_col, freq_taster_table, num_expected_freq_count_rows)
+
+def set_db_freq_taster_twtr(
+  cur,
+  con, 
+  wine_init_table,
+  taster_twtr_col=TASTER_TWTR_COL, 
+  freq_taster_twtr_count_res_col= FREQ_TASTER_TWTR_COUNT_RES_COL,
+  freq_taster_twtr_table=FREQ_TASTER_TWTR_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'taster_twitter_handle' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(taster_twtr_col, str)
+  assert isinstance(freq_taster_twtr_count_res_col, str)
+  assert isinstance(freq_taster_twtr_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, taster_twtr_col, 
+    freq_taster_twtr_count_res_col, freq_taster_twtr_table, num_expected_freq_count_rows)
+
+def set_db_freq_variety(
+  cur,
+  con, 
+  wine_init_table,
+  variety_col=VARIETY_COL, 
+  freq_variety_count_res_col= FREQ_VARIETY_COUNT_RES_COL,
+  freq_variety_table=FREQ_VARIETY_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'variety' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(variety_col, str)
+  assert isinstance(freq_variety_count_res_col, str)
+  assert isinstance(freq_variety_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, variety_col, 
+    freq_variety_count_res_col, freq_variety_table, num_expected_freq_count_rows)
+
+def set_db_freq_winery(
+  cur,
+  con, 
+  wine_init_table,
+  winery_col=VARIETY_COL, 
+  freq_winery_count_res_col= FREQ_VARIETY_COUNT_RES_COL,
+  freq_winery_table=FREQ_VARIETY_TABLE,
+  testing=False
+):
+  """Sets the frequency table for the 'variety' column from the 
+  wine_init_table table. (Two columns, as per
+  description of set_db_freq_def.)
+  """
+  assert isinstance(wine_init_table, str)
+  assert isinstance(winery_col, str)
+  assert isinstance(freq_winery_count_res_col, str)
+  assert isinstance(freq_winery_table, str)
+  assert isinstance(testing, bool)
+  # if testing, then perform a check to ensure table is created properly
+  num_expected_freq_count_rows = None 
+  set_db_freq_table_def(cur, con, wine_init_table, winery_col, 
+    freq_winery_count_res_col, freq_winery_table, num_expected_freq_count_rows)

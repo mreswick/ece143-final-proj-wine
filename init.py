@@ -54,7 +54,20 @@ def set_freq_tables(cur=None, con=None, testing=True):
   freq.set_db_freq_desig(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
   #set frequency of points
   freq.set_db_freq_points(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
-
+  #set frequency of provinces
+  freq.set_db_freq_province(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of region1
+  freq.set_db_freq_region1(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of region2
+  freq.set_db_freq_region2(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of taster_name
+  freq.set_db_freq_taster(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of taster_twitter_handle
+  freq.set_db_freq_taster_twtr(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of wine 'variety'
+  freq.set_db_freq_variety(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
+  #set frequency of wine 'winery'
+  freq.set_db_freq_winery(cur, con, WINE_INIT_TABLE_NAME, testing=testing)
 
 if __name__ == "__main__":
   init_wine_db()
