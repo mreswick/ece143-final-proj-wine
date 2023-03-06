@@ -1,7 +1,6 @@
 import sqlite3 as sl
 import pandas as pd
-from wine_stat import freq # named it wine_stat so that it doesn't override python's stat package
-from wine_stat import vis  # named it wine_start so that it doesn't override python's stat package
+from wine_stat import freq, vis, common_stat # named it wine_stat so that it doesn't override python's stat package
 from data_cleaning import data_cleaning
 from database import db_constants
 
@@ -89,7 +88,7 @@ if __name__ == "__main__":
   con, cur = get_db(cur=None, con=None) #don't yet have connection to database
   #initialize database with overall wine data table with 
   data_cleaning.init_wine_table_with_null_cleaning(cur, con)
-  
+
   #set and visualize via pie charts frequency info of columns in wine dataset
   set_freq_tables(cur, con, testing=False)
   # get top n_i tables for n_i = 5, 10, 20
