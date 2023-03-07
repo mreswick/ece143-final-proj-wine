@@ -1,0 +1,5 @@
+fuzzywuzzy
+nltk
+pandas
+python-Levenshtein
+seaborn
