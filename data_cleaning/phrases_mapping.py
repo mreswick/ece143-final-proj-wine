@@ -4,6 +4,7 @@ from nltk.stem import PorterStemmer
 from fuzzywuzzy import fuzz
 import json
 import math
+import os
 
 stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 
     'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 
@@ -118,6 +119,23 @@ def mapping_dict (similar_map, generic = False, generic_thres=50):
             for idx, _ in scores:
                 if idx != max_idx:
                     groups[idx].remove(k)
+        
+        singles = []
+        for g in groups:
+            if len(g) == 1:
+                singles.append(list(g)[0])
+        
+        groups = [g for g in groups if len(g) > 1]
+        for k in singles:
+            # find the group idx that is best for k
+            scores = []
+            for idx in range(len(groups)):
+                #print(groups[idx])
+                score_tmp = [fuzz.token_set_ratio(k, p) for p in groups[idx]]
+                scores.append( (idx, sum(score_tmp)/len(score_tmp) ) )
+            max_idx, _ = max(scores, key=lambda x: x[1])
+            
+            groups[max_idx] = groups[max_idx] | {k}
 
     # contruct mapping dict based on the groups. Pick the shortest as the mapped value
     mapping_dict = {}
@@ -172,11 +190,19 @@ def mapping_column(col, threshold=85, generic=False, logging=True):
     phrases = list(filter(check_not_nan, col.unique()))
     assert all([isinstance(p, str) for p in phrases])
     
-    d = find_similar_phrases(phrases, threshold=threshold, generic=generic)
-    mapping = mapping_dict(d, generic=generic)
+    json_fn = f"./mapping_{col.name}_{threshold}{'_genenric' if generic else ''}.json"
+    if os.path.isfile(json_fn):
+        print("Loading existing mapping dictionary")
+        with open(json_fn, 'r') as file:
+            mapping = json.load(file)
+    else:
+        print("Creating new mapping dictionary")
+        d = find_similar_phrases(phrases, threshold=threshold, generic=generic)
+        print("Re-grouping")
+        mapping = mapping_dict(d, generic=generic)
     
-    if logging:
-        with open(f"mapping_{col.name}_{threshold}{'_genenric' if generic else ''}.json", 'w') as file:
+    if logging and (not os.path.exists(json_fn)):
+        with open(json_fn, 'w') as file:
             file.write( json.dumps(mapping, ensure_ascii=False).encode('utf8').decode() )
     
     one = {}
