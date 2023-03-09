@@ -127,3 +127,31 @@ def get_basic_stats_of_col1_grouped_by_cols(cur, con,
   pd_res = pd_table.groupby(cols_to_group_by)[col_name].aggregate(stats_to_compute)
   #output to database
   pd_res.to_sql(res_table_name, con, if_exists='replace')
+
+
+def get_common_numeric_stats_by_table(cur, con, input_table_name):
+  """
+  create numeric stats for the input table, non-numeric cols will not get 
+  stats here(use freq for those cols)
+  Param:
+   @cur, con: database vars
+   @input_table_name: the name of the table
+
+   Returns the name (as a string) of this newly-created 
+   table of basics statistics.
+
+  """
+  assert isinstance(input_table_name, str)
+  #create save name for stats table
+  res_table_name = f'{input_table_name}_numeric_stats'
+  #read in table to data frame
+  pd_table = pd.read_sql(f'SELECT * FROM {input_table_name}', con, index_col='index')
+  #stats for the table
+  pd_res = pd_table.describe()
+  #output to database
+  pd_res.to_sql(res_table_name, con, if_exists='replace')
+  
+  return pd_res
+
+
+  
