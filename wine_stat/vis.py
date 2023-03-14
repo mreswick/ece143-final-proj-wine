@@ -1,8 +1,154 @@
 import pandas as pd
 from wine_stat import freq
+import seaborn as sb
+import matplotlib.pyplot as plt
 
 """Module for visualizing data.
 """ 
+
+
+
+
+# def plot_kde_dist_df(
+#   cur,
+#   con,
+#   title,
+#   xlabel,
+#   topnnum,
+
+
+# ):
+"""Plots kde distribution chart for the given dataframe."""
+
+def plot_bar_chart(
+  cur,
+  con,
+  table_name,
+  col_of_labels,
+  col_to_plot,
+  y_axis_description,
+  p_title,
+  limit=None,
+  hue=None,
+  orient='v',
+  figsize=[14, 6],
+  bar_limits=None,
+  label_bars=False,
+  **kwargs #any extra args to seaborn.barplot(...)
+):
+  """Plots a bar chart of the given columns with the 
+  given labels from the given table in the database,
+  with the bars descending going from 
+  left to right.
+  Param:
+    @limit: the number of topmost rows to select/graph,
+    in descending order (ie the limit greatest get plotted)
+  """
+  assert isinstance(col_of_labels, str)
+  assert isinstance(col_to_plot, str)
+  assert isinstance(limit, int) or limit == None
+  if isinstance(limit, int):
+    assert limit > 0
+  if bar_limits != None:
+    assert isinstance(bar_limits, tuple)
+    assert len(bar_limits) == 2
+    for i in bar_limits:
+      assert isinstance(i, int) or isinstance(i, float)
+
+  
+
+
+  #construct query string to select column of labels
+  #and columns to plot. Gets the columns as having
+  #the same name as in the table.
+  # get_cols_query_str = col_of_labels
+  # for col_to_plot in cols_to_plot:
+  #   get_cols_query_str += f', {col_to_plot}'
+  # pd_table = pd.read_sql(f'SELECT {get_cols_query_str} FROM {table_name}', con)
+  plt.figure(figsize=figsize)
+  # sb.color_palette("crest", as_cmap=True)
+  # sb.color_palette("ch:start=.2,rot=-.3", as_cmap=True)
+  hue_query_str = ""
+  if hue != None:
+    hue_query_str = f', {hue}'
+  pd_table = pd.read_sql(f'SELECT {col_of_labels}, {col_to_plot}{hue_query_str}  FROM {table_name}', con)
+  pd_table = pd_table.sort_values(by=col_to_plot,ascending = False)
+  if limit:
+    pd_table = pd_table.head(limit)
+  #swap columns if plotting horizontal bar chart
+  x = col_of_labels if orient != 'h' else col_to_plot
+  y = col_to_plot if orient != 'h' else col_of_labels
+
+  #palette used if graphing countries
+  if x == 'country' or y == 'country':
+    opac = 0.8 # opacity
+    x_data = pd_table[x]
+    y_data = pd_table[y]
+    palette = []
+    if orient=='v':
+      col_data = x_data
+      palette = [
+            (0.1, 0.1, 0.8, opac) if xi == 'US'
+        else (0.8, 0.5, 0.8, opac) if xi == 'Switzerland'
+        else (0.8, 0.4, 0.0, opac) if xi == 'France'
+        else (0.0, 0.9, 0.0, opac) if xi == 'Italy'
+        else (0.9, 0.0, 0.0, opac) if xi == 'Spain'
+        else (0.7, 0.0, 0.8, opac) if xi == 'Portugal'
+        else (0.5, 0.2, 0.1, opac) if xi == 'Germany'
+        else (0.5, 0.5, 0.8, opac) if xi == 'Canada'
+        else (0.1, 0.4, 0.5, opac) if xi == 'Hungary'
+        else (0.35, 0.4, 0.1, opac) if xi == 'Lebanon'
+        else (0.5, 0.8, 0.9, opac) if xi == 'England'
+        else (0.4, 0.2, 0.3, opac) if xi == 'India'
+        else (0.8, 0.8, 0.8, opac) for xi in col_data
+      ]
+    else:
+      col_data = y_data
+      palette = [
+            (0.1, 0.1, 0.8, opac) if xi == 'US'
+        else (0.8, 0.5, 0.8, opac) if xi == 'Switzerland'
+        else (0.8, 0.4, 0.0, opac) if xi == 'France'
+        else (0.0, 0.9, 0.0, opac) if xi == 'Italy'
+        else (0.9, 0.0, 0.0, opac) if xi == 'Spain'
+        else (0.7, 0.0, 0.8, opac) if xi == 'Portugal'
+        else (0.5, 0.2, 0.1, opac) if xi == 'Germany'
+        else (0.5, 0.5, 0.8, opac) if xi == 'Canada'
+        else (0.1, 0.4, 0.5, opac) if xi == 'Hungary'
+        else (0.35, 0.4, 0.1, opac) if xi == 'Lebanon'
+        else (0.5, 0.8, 0.9, opac) if xi == 'England'
+        else (0.4, 0.2, 0.3, opac) if xi == 'India'
+        else (0.8, 0.8, 0.8, opac) for xi in col_data
+      ]
+    bplot = sb.barplot(data=pd_table, x=x, y=y, palette=palette, **kwargs)
+  else:
+    bplot = sb.barplot(data=pd_table, x=x, y=y, **kwargs)
+  
+  #label bars of bar plots if specified
+  if label_bars:
+    #make room for labels
+    if orient != 'h':
+      bplot.margins(y=0.1)
+    else:
+      bplot.margins(x=0.1)
+    #plot labels
+    for bars in bplot.containers:
+      bplot.bar_label(bars, padding=2.2)
+
+  if orient != 'h':
+    bplot.set_xticklabels(labels = pd_table[col_of_labels],rotation = 75)
+    bplot.set_ylabel(y_axis_description)
+    if bar_limits != None:
+      # set y-ais limits
+      plt.ylim(*bar_limits)
+  else:
+    bplot.set_xlabel(y_axis_description)
+    if bar_limits != None:
+      # set x-axis limits
+      plt.xlim(*bar_limits)
+  plt.title(p_title)
+  #sb.set_ylabels(y_axis_description)
+  #sb.move_legend(bplot, 'lower center')
+  plt.tight_layout()
 
 def plot_pie_chart(
   cur,
