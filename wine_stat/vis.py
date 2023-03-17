@@ -1,10 +1,56 @@
 import pandas as pd
 from wine_stat import freq
-import seaborn as sb
+import seaborn as sns
 import matplotlib.pyplot as plt
+import colorcet as cc
 
 """Module for visualizing data.
 """ 
+
+def draw_fig(df, ct, title_ = 'Top Flavors', save=True, topk=5, max_=1):
+  uniques = set()
+  def fun(x):
+      for i in x:
+          uniques.add(i[0])
+      return True
+  ct.apply(lambda x: fun(x))
+  
+  custom_palette = {i:j for i,j in zip(uniques, sns.color_palette(cc.glasbey, n_colors=len(uniques))) }
+  #print(custom_palette)
+  
+  fig, axs = plt.subplots(1,len(ct),figsize = (3*len(ct),5))
+  first = True
+  for ax, g_id in zip(axs,ct.index):
+      df_tmp = pd.DataFrame(ct[g_id], columns = ['name','value'])[:topk]
+      df_tmp['value'] = df_tmp['value']/(len(df)//len(ct))
+      plot_ = sns.barplot(data=df_tmp, y='name', x='value', ax=ax, orient='h', palette=custom_palette)
+      plot_.set(title=str(g_id))
+      plot_.set(xlabel=None)
+      plot_.set(ylabel=None)
+      plot_.set(xlim=(0, max_))
+      if first:
+          first = False
+
+      else:
+          #plot_.set(yticklabels=[])
+          first = first
+
+  fig.suptitle(title_, fontsize=14)
+  #fig.text(0.5, 0.0, 'common X', ha='center')
+  fig.text(0.5, 0.0, 'Frequency', ha='center')
+  plt.tight_layout()
+  
+  if save:
+      plt.savefig(f'./{title_}.jpg',dpi=300)
+  
+  plt.show()
+  
+def draw_fig_new(df, ct, title_ = 'Top Flavors', save=True, topk=5, max_=1):
+  for i in range(len(ct)):
+      df_tmp = pd.DataFrame(ct.iloc[i], columns = ['name','value'])[:topk]
+      df_tmp['value'] = df_tmp['value']/(len(df)//len(ct))
+      sns.barplot(data=df_tmp, y = 'name', x='value', orient='h')
+        
 
 def plot_bar_chart(
   cur,
@@ -96,9 +142,9 @@ def plot_bar_chart(
         else (0.4, 0.2, 0.3, opac) if xi == 'India'
         else (0.8, 0.8, 0.8, opac) for xi in col_data
       ]
-    bplot = sb.barplot(data=pd_table, x=x, y=y, palette=palette, **kwargs)
+    bplot = sns.barplot(data=pd_table, x=x, y=y, palette=palette, **kwargs)
   else:
-    bplot = sb.barplot(data=pd_table, x=x, y=y, **kwargs)
+    bplot = sns.barplot(data=pd_table, x=x, y=y, **kwargs)
   
   #label bars of bar plots if specified
   if label_bars:

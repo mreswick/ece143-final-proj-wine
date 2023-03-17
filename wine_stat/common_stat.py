@@ -1,9 +1,38 @@
 import pandas as pd
 from database import db_constants
+from collections import defaultdict
 
 """A general-purpose statistics module,
 and other basic operations (like number
 of rows in table)."""
+
+def counts(df_col):
+    cc = defaultdict(int)
+    
+    def fun(x):
+        for i in x:
+            cc[i] += 1
+        return True
+    df_col.progress_apply(lambda x: fun(x) )
+    
+    return sorted(cc.items(), key=lambda x:x[1], reverse=True)
+
+def percent_range(col_name, df_, N = 5):
+    percent = [(i+1) * (1.0/N) for i in range(N-1)]
+    x_percentile = df_[col_name].describe(percentiles=percent)
+    
+    if N %2 == 1:
+        x_percentile = x_percentile.drop(index=['50%'])
+    
+    ranges = x_percentile[3:].values
+    return ranges
+
+def counts_table(df, col_name, common_filter=0):
+    df['points_range'] = pd.cut(df["points"], percent_range("points", df))
+    
+    common_words = set([i[0] for i in counts(df[col_name])[:common_filter] ])
+    
+    return df.groupby('points_range')[col_name].apply(lambda x: counts(x)).apply(lambda x: [i for i in x if i[0] not in common_words])
 
 def get_num_rows_in_table(cur, con, table_name):
   """Gets the number of rows in the given table with name
