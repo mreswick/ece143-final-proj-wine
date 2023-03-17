@@ -5,6 +5,9 @@ import math
 
 class MainNet(nn.Module):
   def __init__(self,len_data,dim_in,dim_k):
+    len_data: int #data length
+    dim_in: int #dimension of word vector
+    dim_k: int #dimension of K
     super(MainNet,self).__init__()
     self.MHSA=MultiHeadSelfAttention(len_data,dim_in,dim_k,dim_k)
     self.FFN=FFN(dim_k)
@@ -13,10 +16,10 @@ class MainNet(nn.Module):
     self.dropout=nn.Dropout(p=0.5)
     self.fc_dim1=dim_k#sequnece length
     self.fc_dim2=32
-    self.fc_dim3=16
-    self.fc_dim4 = 11
-    self.fc_dim5 = 11
-    self.fc1 = nn.Linear(self.fc_dim1, self.fc_dim5)
+    self.fc_dim3=1
+    self.fc_dim4 = 1
+    self.fc_dim5 = 1
+    self.fc1 = nn.Linear(self.fc_dim1, self.fc_dim2)
     self.fc2 = nn.Linear(self.fc_dim2, self.fc_dim3)
     self.fc3 = nn.Linear(self.fc_dim3, self.fc_dim4)
     self.fc4 = nn.Linear(self.fc_dim4, self.fc_dim5)
@@ -35,10 +38,10 @@ class MainNet(nn.Module):
     #x=torch.reshape(x,(x.shape[0],-1))
     x=self.simple_attention(x)
     x=self.fc1(x)
-    #x=F.relu(x)
-    #x=self.bn1(x)
-    #x=self.dropout(x)
-    #x=self.fc2(x)
+    x=F.relu(x)
+    x=self.bn1(x)
+    x=self.dropout(x)
+    x=self.fc2(x)
     #x=F.relu(x)
     #x=self.bn2(x)
     #x=self.dropout(x)

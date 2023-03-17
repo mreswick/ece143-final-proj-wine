@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6383d440-a0fc-445b-a8c3-e8ee53539872" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/point_prediction/get_word_vector.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_prediction/get_word_vector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_prediction/load_glove_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_prediction/load_glove_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_prediction/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_prediction/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/point_prediction/train_and_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/point_prediction/train_and_test.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="b56cc21f-2676-475b-be16-6541a2c8bf7f" />
+  <component name="ProjectId" id="2NA5rlEsqkRq7DhYWeI57sStrDB" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6383d440-a0fc-445b-a8c3-e8ee53539872" name="Default Changelist" comment="" />
+      <created>1679094246589</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1679094246589</updated>
+      <workItem from="1679094251942" duration="1346000" />
+      <workItem from="1679095835217" duration="1265000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+</project>
