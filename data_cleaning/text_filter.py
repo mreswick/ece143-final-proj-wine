@@ -12,9 +12,19 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
 class T(dict):
+  """A class that behaves as a dictionary, 
+  except that it also supports the addition
+  operation, in which case it's values get 
+  added. This is namely used to 
+  for word frequencies, so that
+  dictionaries representing word
+  frequencies can be added."""
   def __init__(self, t_T=None):
-    # self.a = a
-    # self.rmin = rmin
+    """Create new T object
+    from that which is inputted. This 
+    can either be a tuple, representing
+    a single key and value, or a dictionary,
+    or a numpy array.""" 
     if(not(t_T is None)):
       if isinstance(t_T, tuple):
         assert isinstance(t_T, tuple)
@@ -27,7 +37,11 @@ class T(dict):
         self.add_nparr(t_T)
     else:
       super().__init__()
+
   def __add__(self, t_T):
+    """This implements the above-mentioned
+    adding for a dictionary, in which
+    entries for the same keys are added."""
     to_ret = None
     if isinstance(t_T, tuple):
       assert isinstance(t_T, tuple)
@@ -46,46 +60,46 @@ class T(dict):
         curr_dist_stored = self.get(circle_center, 0)
         r_to_use = rmin + curr_dist_stored #max(rmin, curr_dist_stored)
         to_ret[circle_center] = r_to_use
-    # if self[0].issuperset(t_T[0]):
-    #   return T(self[0], max(self[1], t_T[1]))
-    # else:
-    #   return T(self[1]
     return to_ret
+  
+  """Comparison functions for whether an object
+  of this class is less than (__lt__),
+  less than or equal to (__le__), 
+  equal (__eq__), not equal to (__ne__),
+  greater than (__gt__), or greater than
+  or equal to (__ge__) that of another instance
+  of this class.""" 
   def __lt__(self, other):
+    assert isinstance(other, T)
     return sum(self.values()) < sum(other.values())
   def __le__(self, other):
+    assert isinstance(other, T)
     return sum(self.values()) <= sum(other.values())
-  # def __eq__(self, other):
-  #   return sum(self.values()) == sum(other.values())
-  # def __ne__(self, other):
-  #   return sum(self.values()) != sum(other.values())
   def __eq__(self, other):
+    assert isinstance(other, T)
     return dict.__eq__(self, other)
   def __ne__(self, other):
+    assert isinstance(other, T)
     return not(self.__eq__(self, other))
   def __gt__(self, other):
+    assert isinstance(other, T)
     return sum(self.values()) > sum(other.values())
   def __ge__(self, other):
+    assert isinstance(other, T)
     return sum(self.values()) >= sum(other.values())
-
-  def add_nparr(self, nparr):
-    """nparr is 1D
-    numpy array
-    with distances, summed-squared,
-    to circle centers in order
-    of circle center indices.
-    """
-    for ind, x_y_sum_dist in np.ndenumerate(nparr):
-      self[ind[0]] = x_y_sum_dist
 
 class TextFilter:
     """A class that stores a dataframe and which
     column of text to process, as well as a 
     column that stores a list of the words
     of that text that have had stopping words removed
-    and which have had stemming be done.
+    and which have had stemming be done. This class
+    thus represents a dataframe with text filtering
+    performed on it, namely in regards to getting
+    words and their frequencies and storing them,
+    so that it can then create word clouds.
 
-    This class can be used to create word clouds. To
+    This class can thus be used to create word clouds. To
     do so, after initializing an object of it:
       1. at minimum: TextFilter(df) with the 
       dataframe you wish to process with that column
@@ -115,8 +129,6 @@ class TextFilter:
         self.__coltext = coltext
         self.__coltext_cleaned = f'{coltext}_{suffix}'
 
-        #print(self.d[coltext].head(5))
-
         #initialize description_processed column
         for (rowind, description) in self.d[coltext].items():
             #convert description to list of strings, separated on whitespace
@@ -140,40 +152,37 @@ class TextFilter:
         #initialize with adjectives list
         self.set_adjectives()
         self.set_adjectives_counts()
-
-    # def split_str(self, text_entry):
-    #     """Assumes the text entry is stored space-delimited,
-    #     and so splits on comma to return list."""
-    #     return text_entry.split(" ")
-    # def congeal_str(self, list_text):
-    #     """Takes a list of text words and joins them
-    #     on a comma."""
-    #     return " ".join(list_text)
+  
     def set_adjectives(self, colname=None, suffix="adjectives"):
-        """Uses TextBlob to filter for only adjectives."""
+        """Uses TextBlob to filter; by default, assumes
+        filtering for adjectives.It writes the resulting list
+        of words into a new column in the dataframe that
+        this class wraps.
+        Param:
+          @colname: the column with the text to get.
+          @suffix: the suffix to added to a new column name for the
+          dictionary this class wraps.
+        """
+        assert colname is None or isinstance(colname, str)
+        assert isinstance(suffix, str)
         colname = self.__coltext_cleaned if colname is None else colname
         # print("set_adjectives colname: ", colname)
-        def get_adjectives(text):
-            # print(type(text))
-            # print(text)
-            """Text to get the adjectives of."""
+        def get_words(text):
+            """Text to get the words of."""
             word_blob = TextBlob(text)
             #following line inpsired by:
             # https://stackoverflow.com/questions/56980515/how-to-extract-all-adjectives-from-a-strings-of-text-in-a-pandas-dataframe
-            #return [word for (word, tag) in word_blob.tags if tag.startswith("JJ")] 
             return [word for (word, tag) in word_blob.tags]
         #assumes colname text is comma-delimited, so split and process
         new_adj_col_name = f'{colname}_{suffix}'
-        # print("new_adj_col_name: ", new_adj_col_name)
-        # print(type(self.d[colname]))
-        # print(self.d.dtypes)
-        # print(self.d[colname].head(5))
-        # print(self.d[colname])
-        # print(self.d.head(5))
-        self.d[new_adj_col_name] = self.d[colname].apply(get_adjectives)
+        self.d[new_adj_col_name] = self.d[colname].apply(get_words)
+  
     def set_adjectives_counts(self, colname=None, suffix="dict_counts"):
         """Adds a new column that is a dictionary with the counts of each
-        word."""
+        word, with the given column name with suffix appended to it, to
+        the dataframe this class wraps."""
+        assert colname is None or isinstance(colname, str)
+        assert isinstance(suffix, str)
         colname = f'{self.__coltext_cleaned}_adjectives' if colname is None else colname
         new_word_count_col_name = f'{self.__coltext_cleaned}_adjectives_{suffix}' if colname is None else f'{colname}_{suffix}'
         def create_word_count_dict(textlist):
@@ -183,27 +192,14 @@ class TextFilter:
                 dict_words_seen[word] = dict_words_seen.get(word, 0) + 1
             return T(dict_words_seen)
         self.d[new_word_count_col_name] = self.d[colname].apply(create_word_count_dict)
-    # def group_by(self, cols_to_group_by, col_to_sum='description_processed_adjectives_dict_counts'):
-    #     """Returns new dataframe with columns
-    #     of columns to group by, along with "summed"
-    #     custom type T dictionary of word count frequencies.
-    #     """
-    #     assert isinstance(cols_to_group_by, list)
-    #     for col in cols_to_group_by:
-    #         assert isinstance(col, str)
-    #     df_to_ret = self.d.copy()
-    #     df_to_ret = df_to_ret.groupby(by=cols_to_group_by, group_keys=False)[col_to_sum].sum().reset_index()
-    #     #expand dataframe from dictionaries of words/keys to counts/values
-    #     df_to_ret[col_to_sum + '_words'] = df_to_ret[col_to_sum].apply(lambda x: list(x.keys()))
-    #     df_to_ret[col_to_sum + '_counts'] = df_to_ret[col_to_sum].apply(lambda x: list(x.values()))
-    #     df_to_ret = df_to_ret.explode([col_to_sum + '_words', col_to_sum + '_counts'], ignore_index=True)
-    #     #df_to_ret = df_to_ret.drop(columns=['temp1', 'temp2'])
-    #     return df_to_ret
+
     def group_by(self, d, cols_to_group_by, col_to_sum='description_processed_adjectives_dict_counts'):
       """Returns new dataframe with columns
       of columns to group by, along with "summed"
       custom type T dictionary of word count frequencies.
       """
+      assert isinstance(d, pd.DataFrame)
+      assert isinstance(col_to_sum, str)
       assert isinstance(cols_to_group_by, list)
       for col in cols_to_group_by:
           assert isinstance(col, str)
@@ -213,11 +209,24 @@ class TextFilter:
       df_to_ret[col_to_sum + '_words'] = df_to_ret[col_to_sum].apply(lambda x: list(x.keys()))
       df_to_ret[col_to_sum + '_counts'] = df_to_ret[col_to_sum].apply(lambda x: list(x.values()))
       df_to_ret = df_to_ret.explode([col_to_sum + '_words', col_to_sum + '_counts'], ignore_index=True)
-      #df_to_ret = df_to_ret.drop(columns=['temp1', 'temp2'])
       return df_to_ret
     def group_by_dict(self, d, cols_to_group_by, col_to_sum='description_processed_adjectives_dict_counts'):
-      #groups dict column as str, as dicts are not hashable for this comparison; convert
-      #to str when removing it back out
+      """Groups dict column as str, as dicts are not hashable for this comparison; convert
+      to str when removing it back out.
+      This function groups by a column of dictionaries (col_to_sum), along with
+      columns in the cols_to_group_by list, by first treating the dictionaries in col_to_sum
+      as strings.
+      This functon is used to group by dictionaries of frequencies when creating word clouds.
+      Param:
+        @d: a dataframe to group
+        @cols_to_group_by: the column to group by
+        @col_to_sum: the colum to convert to string and then group by with
+      """
+      assert isinstance(d, pd.DataFrame)
+      assert isinstance(col_to_sum, str)
+      assert isinstance(cols_to_group_by, list)
+      for col in cols_to_group_by:
+        assert isinstance(col, str)
       new_d = d.copy()
       new_d[col_to_sum] = new_d[col_to_sum].astype(str)
       new_d = new_d.groupby(by=cols_to_group_by + [col_to_sum], group_keys=False)[cols_to_group_by + [col_to_sum]].apply(lambda x: x).drop_duplicates()
@@ -226,7 +235,7 @@ class TextFilter:
       self, 
       cur, 
       con, 
-      cols_to_group_by, 
+      cols_to_group_by,
       topn, 
       col_to_measure_by, 
       df_to_measure_by=None, 
@@ -236,8 +245,34 @@ class TextFilter:
       img_file_path='visuals\wine-glass-outline-hi.png',
       colormapname='Reds', 
       **kwargs):
-      #assert df_to_measure_by is not None or tablename_to_measure_by is not None
-      #assert (df_to_measure_by is None) or (tablename_to_measure_by is None)
+      """Produces wine word clouds for the 'top n' of
+      groups (grouped by columns in cols_to_group_by) as measured
+      by cols_to_measure_by in either the df or table to measure by.
+      The column used to sum the frequency counts is col_to_sum,
+      and img_file_path is used to give an overall background. The
+      default coloring scheme is red.
+      Param:
+        @cur, con: database vars
+        @cols_to_group_by: the columns to group by to produce the word clouds
+        (ie one for each such group)
+        @topn: the topn groups (only produes a word cloud for the topn
+        such groups)
+        @col_to_measure_by: the column to measure the "top n" by
+        @df_to_measure_by, tablename_to_measure_by: either the dataframe
+        or tablename with the column col_to_measure_by can be passed
+        @ascending: whether topn gets the "top" or "bottom" n groups,
+        as measured by the corresponding entry in col_to_measure_by
+        @col_to_sum: the name for the column of summed frequencies.
+        @img_file_path: a path to the image to use for the word clouds
+        @colormapname: the name for the color map to be used for the
+        word clouds
+        @**kwargs: any extra arguments to pass to the word cloud creation.
+      """
+      assert isinstance(cols_to_group_by, list)
+      for col in cols_to_group_by:
+        assert isinstance(col, str)
+      assert isinstance(topn, int)
+      assert topn > 0
       df_to_plot = self.group_by(self.d, cols_to_group_by, col_to_sum)
       df_to_plot = self.group_by_dict(df_to_plot, cols_to_group_by, col_to_sum)
       #keep only the topn by some given measurement
@@ -259,45 +294,3 @@ class TextFilter:
         plt.imshow(wordcloud)
         plt.axis("off")
         plt.show()
-          
-    # def get_top_n_of_group_by(self, df, cols_to_group_by, n, col_summed='description_processed_adjectives_dict_count'):
-    #   df_to_ret = df.groupby(by=cols_to_group_by, group_keys=False)[col_summed].head(n)
-    #   return df_to_ret
-    # def set_sorted_counts_after_group_by(self, df, colname='description_processed_adjectives_dict_count', suffix='sorted'):
-    #     new_colname = f'{colname}_{suffix}'
-    #     #creates new column in dataframe that is sorted list of tuples as (key, value)
-    #     def get_sorted_counts(dict_counts):
-    #       return sorted(dict_counts.items(), key=lambda x: x[0])
-    #     df[newcolname] = df[colname].apply(get_sorted_counts)
-    # def get_top_n_sorted_counts_after_group_by(self, df, n, colname='description_processed_adjectives_dict_count_sorted'):
-    #   assert isinstance(n, int)
-    #   assert isinstance(colname, str)
-    #   newcolname = f'{colname}_top_{str(n)}'
-    #   def get_top_n(list_counts):
-    #     return list_counts[:n]
-    #   df[newcolname] = df[colname].apply(get_top_n)
-    # def get_top_n_sorted_counts_after_group_by_as_df(self, df, n, cols_grouped_by, colname='description_processed_adjectives_dict_count_sorted'):
-    #   assert isinstance(cols_grouped_by, list)
-    #   for col in cols_grouped_by:
-    #     assert isinstance(col, str)
-    #   suffix = f"_top_{str(n)}"
-    #   colname += suffix
-    #   dict_to_create_new_df_with = {}
-    #   for col in cols_grouped_by + [colname]:
-    #     dict_to_create_new_df_with[col] = []
-
-
-    #   for index, row in df[[cols_grouped_by + [colname]]].iterrows():
-    #     for (ind, value) in row.items():
-    #       dict_to_create_new_df_with[ind] = value
-
-    #   for (key, counts_list) in df[colname].items():
-
-
-    
-        
-
-        
-        
-    
-

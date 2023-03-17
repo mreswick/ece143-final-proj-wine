@@ -6,20 +6,6 @@ import matplotlib.pyplot as plt
 """Module for visualizing data.
 """ 
 
-
-
-
-# def plot_kde_dist_df(
-#   cur,
-#   con,
-#   title,
-#   xlabel,
-#   topnnum,
-
-
-# ):
-"""Plots kde distribution chart for the given dataframe."""
-
 def plot_bar_chart(
   cur,
   con,
@@ -55,19 +41,10 @@ def plot_bar_chart(
     for i in bar_limits:
       assert isinstance(i, int) or isinstance(i, float)
 
-  
-
-
   #construct query string to select column of labels
   #and columns to plot. Gets the columns as having
   #the same name as in the table.
-  # get_cols_query_str = col_of_labels
-  # for col_to_plot in cols_to_plot:
-  #   get_cols_query_str += f', {col_to_plot}'
-  # pd_table = pd.read_sql(f'SELECT {get_cols_query_str} FROM {table_name}', con)
   plt.figure(figsize=figsize)
-  # sb.color_palette("crest", as_cmap=True)
-  # sb.color_palette("ch:start=.2,rot=-.3", as_cmap=True)
   hue_query_str = ""
   if hue != None:
     hue_query_str = f', {hue}'
@@ -146,8 +123,6 @@ def plot_bar_chart(
       # set x-axis limits
       plt.xlim(*bar_limits)
   plt.title(p_title)
-  #sb.set_ylabels(y_axis_description)
-  #sb.move_legend(bplot, 'lower center')
   plt.tight_layout()
 
 def plot_pie_chart(
@@ -169,10 +144,7 @@ def plot_pie_chart(
   plot_query_str = f'SELECT {col_of_labels}, {col_of_counts} FROM {freq_table_to_plot}'
   plot_df = pd.read_sql(plot_query_str, con)
   plot_df = plot_df.set_index(col_of_labels)
-  #plots showing percentages of the data
-  # NOTE TO-DO: some of the pie charts have the `y` label argument here appear  on top of their 
-  # wedge labels; this leads to a messy pie chart. FIX THIS for those pie charts we need (if so)
-  # that have this problem.
+  #plot showing percentages of the data
   pie_plot = plot_df.plot.pie(y=col_of_counts, figsize=(7,7), legend=True, autopct='%1.1f%%', title=col_of_counts, shadow=True, labeldistance =1.05, pctdistance=0.78)
   return pie_plot
 
