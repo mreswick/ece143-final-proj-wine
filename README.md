@@ -4,8 +4,8 @@ ECE143 final project for wine reviews.
 # To install required packages:
 `pip install -r requirements.txt`
 
-## Layout of Repo:
-At the top level, we have overall files.
+# Layout of Repo:
+At the top level, we have overall files. The only code file that needs to be run to see our visualizations is RUNME.ipynb; all other code files (*.py) are supporting code files for it.
  - init.py: used to initialize the database
  - requirements.txt: the requirements needed for our repo
  - RUNME.ipynb: the notebook file to create the visuals used for our presentation
