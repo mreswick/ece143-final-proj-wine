@@ -4,7 +4,7 @@ from wine_stat import common_stat, null_info
 from database import db_constants
 
 #constants
-WINE_DATA_PATH = f'../data/{db_constants.WINE_DATA_FILE}'
+WINE_DATA_PATH = f'../data/winemag-data-130k-v2_new.csv' # already had cleaning done on it #f'../data/{db_constants.WINE_DATA_FILE}' 
 TEMP_WINE_DATA_TABLE = 'temp_wine_data' #wine data before cleaning;
                                         #is deleted after cleaning
 WINE_INIT_TABLE_NAME = db_constants.WINE_INIT_TABLE_NAME
