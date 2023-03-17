@@ -152,51 +152,19 @@ def plot_price_grouping_bar_charts(cur, con):
     y_axis_description='Mean price in $',
     p_title='Average Price of Wine By Province'
   )
-  #plot bar chart for average price grouped by country and province
-  # common_stat.get_basic_stats_of_col1_grouped_by_cols(cur, con, 
-  # 'price', ['country', 'province'], db_constants.WINE_INIT_TABLE_NAME)
-  # vis.plot_bar_chart(
-  #   cur, 
-  #   con, 
-  #   'price_basic_stats_grouped_by_country_province',
-  #   'country',
-  #   'mean',
-  #   limit=40,
-  #   y_axis_description='Mean price in $',
-  #   p_title='Average Price of Wine By Country-Province',
-  #   hue='province'
-  # )
+  
   common_stat.get_basic_stats_of_col1_grouped_by_cols(cur, con, 
-  'price', ['country', 'province', 'region_1'], db_constants.WINE_INIT_TABLE_NAME)
-  # vis.plot_bar_chart(
-  #   cur, 
-  #   con, 
-  #   'price_basic_stats_grouped_by_country_province',
-  #   'country',
-  #   'mean',
-  #   limit=40,
-  #   y_axis_description='Mean price in $',
-  #   p_title='Average Price of Wine By Country-Province',
-  #   hue='province'
-  # )
-  testpd = pd.read_sql('SELECT * FROM price_basic_stats_grouped_by_country_province_region_1', con)
-  # t = testpd.groupby('country').sort_values(by='country', ascending=False).head(5)
-  # print(t)
-  # print(t[t['country'] == 'Argentina'])
-  t = testpd.groupby(['country', 'province', 'region_1']).head(5)
-  print(t)
+    'price', ['country', 'province', 'region_1'], db_constants.WINE_INIT_TABLE_NAME)
 
 
-
-# if __name__ == "__main__":
 def init():
+  """Initializes the database. It performs null cleaning,
+  and outputs the resulting table (with default name given in db_contants.py)
+  to the database. This table represents the overall, cleaned data.
+  """ 
   con, cur = get_db(cur=None, con=None) #don't yet have connection to database
   #initialize database with overall wine data table with 
   data_cleaning.init_wine_table_with_null_cleaning(cur, con)
-
-  print(" --> testing: ")
-  #plot_price_grouping_bar_charts(cur, con)
-  print("After having TEST displayed abrchart.")
 
   out_table = common_stat.get_basic_stats_of_col1_grouped_by_cols(
     cur,
@@ -225,36 +193,10 @@ def init():
     sort_by_ascending=False
   )
   cols_to_group_by = ['country', 'province', 'region_1']
-  print("After having called get_table_recurs.")
   res_name = common_stat.concat_str_columns(
     cur,
     con,
     res_table_name,
     cols_to_group_by
   )
-  print("res_name: ", res_name)
   return cur, con
-
-
-  # def get_table_recurs_limit_grouped_by(
-  # cur,
-  # con,
-  # input_table_name,
-  # col_of_scores,
-  # cols_to_group_by,
-  # col_limits,
-  # keep_duplicates,
-  # sort_by_ascending=False,
-  # res_table_suffix=""):
-
-
-
-  # #set and visualize via pie charts frequency info of columns in wine dataset
-  # set_freq_tables(cur, con, testing=False)
-  # # get top n_i tables for n_i = 5, 10, 20
-  # get_top_ns_tables(cur=cur, con=con, n_list=[5, 10, 20])
-  # # plot pie charts:
-  # # - NOTE TO FIX OR BE AWARE OF: this just-below function call may use up too much memory 
-  # #   if len(n_list) for n_list to get_top_ns_tables just above is too long (as will open 
-  # #   up a pie chart for each top n table)
-  # vis.plot_pie_charts_all_top_n_freq_tables(cur, con, freq.glbl_top_n_freq_schemas)
