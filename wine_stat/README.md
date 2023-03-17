@@ -1,0 +1,2 @@
+## wine_stat:
+Contains functions for performing basic statistics, as well as printing the null element breakdown of a table and constructing frequency tables by various groups (for how often such groups appear). Plotting of basic statistics is also included here.
