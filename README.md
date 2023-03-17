@@ -19,6 +19,7 @@ Top level directories:
  - data_cleaning: contains code to clean and otherwise process and filter the data:
    - data_cleaning.py: contains basic data cleaning functions (such as dropping null entries)
    - text_filter.py: is used to process text, count its word frequency, and plot word clouds of it
+   - phrases_mapping.py: contains functions that are used to clean variety, region_1, winery column. Main functionality is to group similar phases into one to avoid misspelling or different spelling for same item. Check mapping_winery_95.json as an example.  
  - database: Contains the database (file) and related functionality:
    - db_constants.py: constants for the database
    - db_op.py: contains basic operations for working with the database
