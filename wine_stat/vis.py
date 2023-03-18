@@ -274,6 +274,7 @@ def plot_pie_charts_all_top_n_freq_tables(
 
 # ----------------------------------------------- Overview ----------------------
 def readin_db_to_df(path='database/'):
+  """Reads in database to dataframe here.""" 
   # read in database
   WINE_INIT_DB_NAME = db_constants.WINE_INIT_DB_NAME
   WINE_INIT_PATH_TO_DB = path + WINE_INIT_DB_NAME
@@ -284,6 +285,7 @@ def readin_db_to_df(path='database/'):
   return df
 
 def sunBurstChart_winecount(df=readin_db_to_df(), color='Bugn'):
+  """Creates a sun-burst chart of the wine count.""" 
   # wine_count under country -> province -> region
   # pick 3 columns and do freq count
   df_CnPR = df[['country', 'province','region_1']].value_counts()
@@ -294,6 +296,7 @@ def sunBurstChart_winecount(df=readin_db_to_df(), color='Bugn'):
   fig.update_traces(textinfo='label + percent parent + value')
 
 def price_point_all(df=readin_db_to_df()):
+  """Plot relationship between price and points.""" 
   title = "Relationship between price and point"
   plt.figure(figsize = [14,6])
   ax = sns.regplot(x = df["price"], y="points", data=df, logx=True, truncate=True)
@@ -302,6 +305,7 @@ def price_point_all(df=readin_db_to_df()):
   # plt.savefig(f'./{title}.jpg',dpi=300)
 
 def price_point_province(df=readin_db_to_df(), n=3):
+  """Plot relationship between price and points for provinces."""
   topProvince = df['province'].value_counts(normalize = True).head(n).index.tolist()
   df_plimit = df[df['price']<=100]
   count = 1
@@ -314,6 +318,7 @@ def price_point_province(df=readin_db_to_df(), n=3):
     count += 1
 
 def price_point_variety(df=readin_db_to_df(), n=3):
+  """Plot price and point for wine varieties.""" 
   df_plimit = df[df['price']<=100]
   topVariety = df['variety'].value_counts(normalize = True).head(n).index.tolist()
   count = 1
@@ -327,6 +332,8 @@ def price_point_variety(df=readin_db_to_df(), n=3):
 
 # ----------------------------------------Overview Map --------------------------
 def count_Country(df=readin_db_to_df()):
+  """Creates a world map of the count of number of reviews
+  per country.""" 
   #get the data that can be read in 'echarts' (echarts.apache.org)
   df_map = df[df['price'] <= 1000]
   df_map.replace("US","United States",inplace=True)
@@ -348,6 +355,8 @@ def count_Country(df=readin_db_to_df()):
   print(link_str)
 
 def point_mean_description_length(df=readin_db_to_df()):
+  """Plots the points against the average description length
+  per taster.""" 
   #get the correlation plot between Points and Mean Description Length and Mean Price group by tasters
   df_points=df[df['price'] <= 1000]
   df_points['description_length']=df_points['description'].str.len()

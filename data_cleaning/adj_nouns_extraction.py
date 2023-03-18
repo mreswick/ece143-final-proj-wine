@@ -4,6 +4,8 @@ from tqdm import tqdm
 
 
 # To generate data/adjectives_nouns.csv. Takes 20-30 minutes to run
+# To thus generate data/adjectives_nouns.csv, uncomment the below,
+# and run this script file.
 
 #stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself',
 #  'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself',
