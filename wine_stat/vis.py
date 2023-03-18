@@ -14,6 +14,16 @@ from pyecharts import options as opts
 """ 
 
 def draw_fig(df, ct, title_ = 'Top Flavors', save=True, topk=5, max_=1):
+  """
+  Draw barplots for top descriptive words and assign each word an unique color.
+  Param:
+      @df: the dataframe
+      @ct: counts_table produced from counts_table()
+      @title_: the title of the plot
+      @save: whether to save the plot
+      @topk: plots topk number of words for each points interval
+      @max_: xlim max range of all subplots
+  """
   uniques = set()
   def fun(x):
       for i in x:
@@ -49,14 +59,7 @@ def draw_fig(df, ct, title_ = 'Top Flavors', save=True, topk=5, max_=1):
   if save:
       plt.savefig(f'./{title_}.jpg',dpi=300)
   
-  plt.show()
-  
-def draw_fig_new(df, ct, title_ = 'Top Flavors', save=True, topk=5, max_=1):
-  for i in range(len(ct)):
-      df_tmp = pd.DataFrame(ct.iloc[i], columns = ['name','value'])[:topk]
-      df_tmp['value'] = df_tmp['value']/(len(df)//len(ct))
-      sns.barplot(data=df_tmp, y = 'name', x='value', orient='h')
-        
+  plt.show()    
 
 def plot_bar_chart(
   cur,

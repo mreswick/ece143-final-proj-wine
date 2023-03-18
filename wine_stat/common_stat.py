@@ -7,6 +7,12 @@ and other basic operations (like number
 of rows in table)."""
 
 def counts(df_col):
+    """
+    Helper function for counts_table.
+    Return counts for each word.
+    Param:
+        @df_col: The column of a df
+    """
     cc = defaultdict(int)
     
     def fun(x):
@@ -18,6 +24,14 @@ def counts(df_col):
     return sorted(cc.items(), key=lambda x:x[1], reverse=True)
 
 def percent_range(col_name, df_, N = 5):
+    """
+    Helper function for counts_table
+    Produce N intervals, where each interval contains same number of samples
+    Param:
+        @col_name: the col name of the df_
+        @df_: the dataframe
+        @N: the number of intervals
+    """
     percent = [(i+1) * (1.0/N) for i in range(N-1)]
     x_percentile = df_[col_name].describe(percentiles=percent)
     
@@ -28,6 +42,13 @@ def percent_range(col_name, df_, N = 5):
     return ranges
 
 def counts_table(df, col_name, common_filter=0):
+    """
+    Produce a counts table that for each points interval, it compute the word counts.
+    Param:
+        @df: the dataframe
+        @col_name: should be "points"
+        @common_filter: number of common words are filtered
+    """
     df['points_range'] = pd.cut(df["points"], percent_range("points", df))
     
     common_words = set([i[0] for i in counts(df[col_name])[:common_filter] ])
