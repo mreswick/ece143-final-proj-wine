@@ -4,7 +4,6 @@ ECE143 final project for wine reviews.
 # Layout of Repo:
 At the top level, we have overall files. The only code file that needs to be run to see our visualizations is RUNME.ipynb; all other code files (*.py) are supporting code files for it.
  - init.py: used to initialize the database
- - requirements.txt: the requirements needed for our repo
  - RUNME.ipynb: the notebook file to create the visuals used for our presentation
  - ECE 143 Final Presentation Deck.pptx.pdf: a pdf version of our final presentation.
 Top level directories:
