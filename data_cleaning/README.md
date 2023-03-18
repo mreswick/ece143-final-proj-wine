@@ -1,0 +1,2 @@
+## data_cleaning:
+Contains functions for performing data cleaning and text processing. "Mapping" .json files are used to group similar words with the corresponding threshold given in their name on a scale of 0 to 100.
