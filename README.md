@@ -1,9 +1,6 @@
 # ece143-final-proj-wine
 ECE143 final project for wine reviews.
 
-# To install required packages:
-`pip install -r requirements.txt`
-
 # Layout of Repo:
 At the top level, we have overall files. The only code file that needs to be run to see our visualizations is RUNME.ipynb; all other code files (*.py) are supporting code files for it.
  - init.py: used to initialize the database
@@ -20,6 +17,7 @@ Top level directories:
    - data_cleaning.py: contains basic data cleaning functions (such as dropping null entries)
    - text_filter.py: is used to process text, count its word frequency, and plot word clouds of it
    - phrases_mapping.py: contains functions that are used to clean variety, region_1, winery column. Main functionality is to group similar phases into one to avoid misspelling or different spelling for same item. Check mapping_winery_95.json as an example.  
+   - adj_nouns_extraction.py: to extract adj and nouns from description column. Run to generate data/adjectives_nouns.csv. Takes 20-30 min to finish
  - database: Contains the database (file) and related functionality:
    - db_constants.py: constants for the database
    - db_op.py: contains basic operations for working with the database
