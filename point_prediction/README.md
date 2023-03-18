@@ -6,7 +6,7 @@ Contains the neural network and related functions to predict point ratings of wi
 
 <center><img src="https://github.com/mreswick/ece143-final-proj-wine/blob/main/point_prediction/network.png" width="60%"></center>
 
-##result:
+## result:
 <center><img src="https://github.com/mreswick/ece143-final-proj-wine/blob/main/point_prediction/acc_0.5934_predict.png" width="60%"></center>
 <center><img src="https://github.com/mreswick/ece143-final-proj-wine/blob/main/point_prediction/acc_0.5934_true.png" width="60%"></center>
 
