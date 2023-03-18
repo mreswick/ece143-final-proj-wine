@@ -45,7 +45,7 @@ def get_adjectives(text, tag_ = 'JJ'):
   return [ token.lemma_ for token in blob if token.tag_ == tag_]
 
 
-df = pd.read_csv('./data/winemag-data-130k-v2.csv')
+df = pd.read_csv('../data/winemag-data-130k-v2.csv')
 #df['description_cleaned'] = df['description'].progress_apply(lambda x: pre_process(x))
 df['description_adj_cleaned'] = df['description'].progress_apply(get_adjectives)
 df['description_noun_cleaned'] = df['description'].progress_apply(lambda x: get_adjectives(x, tag_ = 'NN'))
