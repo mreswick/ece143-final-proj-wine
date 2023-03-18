@@ -3,7 +3,8 @@ Contains the neural network and related functions to predict point ratings of wi
 - 1 Run load_glove_data.py to get vocabulary vectors
 - 2 Run get_word_vector.py to get word embeddings from vocabulary vectors
 - 3 Run train_and_test.py to train and test
-
+- Please download glove data here: https://nlp.stanford.edu/projects/glove/
+- Create a new directory under the root path name "data" and put unzipped golve data into it
 <center><img src="https://github.com/mreswick/ece143-final-proj-wine/blob/main/point_prediction/network.png" width="60%"></center>
 
 ## result:
